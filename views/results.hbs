@@ -1,0 +1,28 @@
+
+<h3>Your results for {{searchTerm}} as below:</h3>
+<hr>
+{{#if noContent}}
+    <h3>No results were found</h3>
+{{else}}
+
+    {{#each dataset}}
+
+    <div class="container results">
+        <h3 class="results-title">{{this.title}}</h3>
+
+        {{#if this.image}}
+            <img src="{{this.image}}" class="results-image">
+        {{else}}
+            <img src="/no_image_avail.jpg">
+        {{/if}}
+
+        <h5 class="results-summary">{{this.summary}}</h5>
+
+        <div class="d-flex justify-content-between">
+            <h6 class="results-pubTime">published at: {{this.pubTime}}</h6>
+            <a href={{this.url}} target="_blank" class="results-readMore"> Read more</a>
+        </div>
+    </div>
+    {{/each}}
+
+{{/if}}

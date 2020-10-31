@@ -1,0 +1,45 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+
+.header {
+    text-align: center;
+    padding: 1em 0;
+}
+
+form {
+    width: 50%;
+    margin: 0 auto;
+    background: blueviolet;
+    padding: 2rem;
+    border: 1px groove purple;
+    border-radius: 5%
+}
+
+.form-label {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+}
+
+.results {
+    display: inline-block;
+    width: 30%;
+    margin: 1em;
+    background-color: azure;
+}
+.results-title {
+    padding: .5em 0;
+}
+
+.results-image {
+    width: 100%
+}
+
+.results-summary {
+    color: grey;
+    font-style: italic;
+    font-weight: normal;
+}
