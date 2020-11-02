@@ -18,15 +18,23 @@ app.set('view engine', 'hbs')
 app.use(express.static(__dirname + '/static')) //for static folders later
 
 const cleaned = (dataArr) => {
-    const dataset = []
-    for (let article of dataArr.articles) {
-        const title = article['title']
-        const pubTime = article['publishedAt']
-        const url = article['url']
-        const image = article['urlToImage'] 
-        const summary = article['description']
-        dataset.push({title, image, summary, pubTime, url })
-    }
+    //const dataset = []
+    // for (let article of dataArr.articles) {
+    //     const title = article['title']
+    //     const pubTime = article['publishedAt']
+    //     const url = article['url']
+    //     const image = article['urlToImage'] 
+    //     const summary = article['description']
+    //     dataset.push({title, image, summary, pubTime, url })
+    // }
+    const dataset = dataArr.articles.map( (ele) => {
+        const title = ele['title']
+        const pubTime = ele['publishedAt']
+        const url = ele['url']
+        const image = ele['urlToImage'] 
+        const summary = ele['description']
+        return {title, pubTime, url, image, summary}
+    } )
     return dataset
 }
 
@@ -45,10 +53,8 @@ app.post('/search',
             apiKey: API_KEY,
             country: searchCountry,
             category: searchCategory,
-            // pageSize: 12
+            pageSize: 12
         })
-        console.info(`fullURL: `, fullURL)
-        const result = await fetch(fullURL)
 
         //to use apiKey in http header to access instead of storing as a variable separately
         /* 
@@ -67,24 +73,37 @@ app.post('/search',
         fetch(url, {headers}).then(result =>result.json())
             .then(result => {log result}).catch(err=>{log error})
         */
+        const cacheData = cacheCart 
+        console.info('cacheData: ', cacheData)        
 
-        const p = await result.json()
-        
-        const dataset = cleaned(p) //arr of result articles
-        console.info('results array cleaned: ', dataset)
-
-        const cacheData = JSON.parse(data.cacheState) //JSON obj
-        console.info('cacheData: ', cacheData)
-        /* const index = [searchKey, searchCountry, searchCategory].join(",") //use string as Index    
-        if (!cacheData[index] || cacheData[index] !== dataset) {
-        cacheData.push({
-            [searchKey+searchCountry, searchCategory]: dataset }
-                }
+        let addRecord = true;
+        for (let record of cacheData) {
+            let matchKey = Boolean(record.searchKey === searchKey)
+            let matchCountry = Boolean(record.searchCountry === searchCountry)
+            let matchCategory = Boolean(record.searchCategory === searchCategory)
+            if (matchKey && matchCountry && matchCategory) {
+                dataset = record['dataset']
+                addRecord = false
+                console.info('search retrieved from cache')
             }
-        )
-        } else {
-            dataset = cacheData['q']['country']['category']
-        } */
+        }
+
+        if (addRecord) {
+            //retrieve news from api via fetch 
+            console.info(`fullURL: `, fullURL)
+            const result = await fetch(fullURL) //fetching data
+            const p = await result.json() //convert to json obj
+            var dataset = cleaned(p) //arr of result articles
+            console.info(dataset.length, ' results array cleaned.')
+
+            const cacheSet = { searchKey, searchCountry, searchCategory, dataset}
+            console.info("cacheSet: ", cacheSet)
+            cacheData.push(cacheSet)
+            console.info('search has been cached')
+        }
+
+
+
         resp.status(200)
         resp.type('text/html')
         resp.render('results', 
@@ -98,14 +117,12 @@ app.post('/search',
         
 })
 
+const cacheCart = []
 
 app.get("/", (req, resp) => {
-    const cacheCart = [] //create cacheState for future retrieval
     resp.status(200)
     resp.type('text/html')
-    resp.render('index', {
-        cacheState: JSON.stringify(cacheCart)
-    })
+    resp.render('index')
 })
 
 

@@ -29,6 +29,8 @@ form {
     width: 30%;
     margin: 1em;
     background-color: azure;
+    max-height: 0.4vh;
+    
 }
 .results-title {
     padding: .5em 0;
