@@ -59,7 +59,7 @@ app.post('/search',
         //to use apiKey in http header to access instead of storing as a variable separately
         /* 
         const headers = {
-            "x-Api-key": "876JHG76UKFJYGVHf867rFUTFGHCJ8JHV"
+            "x-Api-key": "API_KEY_HERE"
           }
         const params = {
             q: data.q,
