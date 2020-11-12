@@ -6,7 +6,7 @@ const fetch = require('node-fetch')
 
 //config PORT & API_KEY & URL
 const PORT = parseInt(process.argv[2]) || parseInt(process.env.PORT) || 3000;
-const API_KEY = process.env.API_KEY || 'db1b2301dbe54a779f1579bb4e54cf57'
+const API_KEY = process.env.API_KEY || ''
 const URL = "https://newsapi.org/v2/top-headlines"
 
 const app = express()
@@ -50,7 +50,7 @@ app.post('/search',
         //to use apiKey in http header to access instead of storing as a variable separately
         /* 
         const headers = {
-            "x-Api-key": "api_key_value"
+            "x-Api-key": "API_KEY_HERE"
           }
         const params = {
             q: data.q,
