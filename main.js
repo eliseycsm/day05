@@ -18,15 +18,6 @@ app.set('view engine', 'hbs')
 app.use(express.static(__dirname + '/static')) //for static folders later
 
 const cleaned = (dataArr) => {
-    //const dataset = []
-    // for (let article of dataArr.articles) {
-    //     const title = article['title']
-    //     const pubTime = article['publishedAt']
-    //     const url = article['url']
-    //     const image = article['urlToImage'] 
-    //     const summary = article['description']
-    //     dataset.push({title, image, summary, pubTime, url })
-    // }
     const dataset = dataArr.articles.map( (ele) => {
         const title = ele['title']
         const pubTime = ele['publishedAt']
@@ -59,7 +50,7 @@ app.post('/search',
         //to use apiKey in http header to access instead of storing as a variable separately
         /* 
         const headers = {
-            "x-Api-key": "876JHG76UKFJYGVHf867rFUTFGHCJ8JHV"
+            "x-Api-key": "api_key_value"
           }
         const params = {
             q: data.q,
@@ -90,19 +81,17 @@ app.post('/search',
 
         if (addRecord) {
             //retrieve news from api via fetch 
-            console.info(`fullURL: `, fullURL)
+            //console.info(`fullURL: `, fullURL)
             const result = await fetch(fullURL) //fetching data
             const p = await result.json() //convert to json obj
             var dataset = cleaned(p) //arr of result articles
-            console.info(dataset.length, ' results array cleaned.')
-
+            //console.info(dataset.length, ' results array cleaned.')
+            
             const cacheSet = { searchKey, searchCountry, searchCategory, dataset}
             console.info("cacheSet: ", cacheSet)
             cacheData.push(cacheSet)
             console.info('search has been cached')
         }
-
-
 
         resp.status(200)
         resp.type('text/html')
@@ -110,14 +99,13 @@ app.post('/search',
             {
                 dataset: dataset, 
                 searchTerm: searchKey,
-                cacheState: cacheData,
                 noContent: !dataset.length
             })
-
-        
 })
 
-const cacheCart = []
+const cacheCart = []  
+//unlike hidden value caching on browser, we can cache on server to ensure same reqs from different browsers
+// return the same results
 
 app.get("/", (req, resp) => {
     resp.status(200)
