@@ -64,9 +64,20 @@ app.post('/search',
         fetch(url, {headers}).then(result =>result.json())
             .then(result => {log result}).catch(err=>{log error})
         */
-        const cacheData = cacheCart 
-        console.info('cacheData: ', cacheData)        
+        let cacheData = cacheCart 
+        //console.info('cacheData: ', cacheData)        
 
+        let cachePeriod = 1000 * 60 * 5 // in milisecs
+        let timeNow = Date.now()
+        let temp = cacheData.filter(elem => (timeNow - elem.timecheck) < cachePeriod)
+        console.info("temp", temp)
+
+        cacheCart.length = 0
+        for (let record of temp) {
+            cacheCart.push(record)
+        }
+        console.info("new cache: ", cacheCart)
+        
         let addRecord = true;
         for (let record of cacheData) {
             let matchKey = Boolean(record.searchKey === searchKey)
@@ -87,7 +98,8 @@ app.post('/search',
             var dataset = cleaned(p) //arr of result articles
             //console.info(dataset.length, ' results array cleaned.')
             
-            const cacheSet = { searchKey, searchCountry, searchCategory, dataset}
+            let timecheck = Date.now()
+            const cacheSet = { timecheck, searchKey, searchCountry, searchCategory, dataset}
             console.info("cacheSet: ", cacheSet)
             cacheData.push(cacheSet)
             console.info('search has been cached')
@@ -103,7 +115,7 @@ app.post('/search',
             })
 })
 
-const cacheCart = []  
+const cacheCart = [] 
 //unlike hidden value caching on browser, we can cache on server to ensure same reqs from different browsers
 // return the same results
 
